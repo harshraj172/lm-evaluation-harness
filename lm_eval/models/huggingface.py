@@ -550,9 +550,13 @@ class HFLM(TemplateLM):
         if peft:
             if model_kwargs.get("load_in_4bit", None):
                 assert PEFT_VERSION >= "0.4.0", "load_in_4bit requires peft >= 0.4.0"
+            print(f"Loading the PEFT adapter from {peft}")
             self._model = PeftModel.from_pretrained(
                 self._model, peft, revision=revision
             )
+            
+            print(f"Merging PEFT adapter into the base model, i.e. {pretrained}")
+            self._model = self._model.merge_and_unload()
 
         return None
 
